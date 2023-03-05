@@ -1,0 +1,22 @@
+#gameboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(50px, 100px));
+    grid-template-rows: repeat(3, minmax(50px, 100px));
+    grid-gap: 10px;
+}
+
+.box {
+    background-color: #1e1e1e;
+    color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+}
