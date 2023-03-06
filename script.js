@@ -61,17 +61,16 @@ const gameController = (() => {
     return { addMarker };
 })();
 
-const cells = document.querySelectorAll('.box');
-cells.forEach(cell => {
-    cell.addEventListener('click', (e) => {
-        const text = cell.textContent;
-        let cellId;
-        if (text === '') {
-            console.log(e.target.dataset.id);
-            cellId = e.target.dataset.id;
-            gameController.addMarker(cellId);
-
-        }
-    });
+const boardContainer = document.getElementById('gameboard');
+boardContainer.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('box')) {
+        return;
+    }
+    const text = e.target.textContent;
+    let cellId;
+    if (text === '') {
+        console.log(e.target.dataset.id);
+        cellId = e.target.dataset.id;
+        gameController.addMarker(cellId);
+    }
 });
-
