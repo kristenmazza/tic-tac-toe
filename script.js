@@ -45,7 +45,22 @@ const playerOne = playerFactory('Player 1', 'X');
 const playerTwo = playerFactory('Player 2', 'O');
 
 const gameController = (() => {
-    gameboard.renderGameboard();
+    function updateGameBoardView() {
+        gameboard.renderGameboard();
+
+        const cells = document.querySelectorAll('.box');
+        cells.forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                const text = cell.textContent;
+                let cellId;
+                if (text === '') {
+                    console.log(e.target.dataset.id);
+                    cellId = e.target.dataset.id;
+                    gameController.addMarker(cellId);
+                }
+            });
+        });
+    }
 
     function addMarker(cellId) {
         if (cellId === '1') {
@@ -55,23 +70,14 @@ const gameController = (() => {
             gameboard.tictactoe[0][1] = '2';
             console.log(gameboard.tictactoe);
         }   
-        gameboard.renderGameboard();
+        updateGameBoardView();
     }
 
-    return { addMarker };
+    function createNewGame() {
+        updateGameBoardView();
+    }
+
+    return { addMarker, createNewGame };
 })();
 
-const cells = document.querySelectorAll('.box');
-cells.forEach(cell => {
-    cell.addEventListener('click', (e) => {
-        const text = cell.textContent;
-        let cellId;
-        if (text === '') {
-            console.log(e.target.dataset.id);
-            cellId = e.target.dataset.id;
-            gameController.addMarker(cellId);
-
-        }
-    });
-});
-
+gameController.createNewGame();
