@@ -9,6 +9,7 @@ const gameboard = (() => {
 
     const board = document.getElementById('gameboard');
 
+    // Add gameboard cells
     function addCells() {
         let cellNumber = 1;
         function createCell(input) {
@@ -28,6 +29,7 @@ const gameboard = (() => {
         }
     }
 
+    // Place marker in the array
     function placeMarker(cell, marker) {
         if (cell === '1') {
             gameboard.tictactoe[0][0] = marker; 
@@ -45,7 +47,7 @@ const gameboard = (() => {
             gameboard.tictactoe[2][0] = marker;
         }  else if (cell === '8') {
             gameboard.tictactoe[2][1] = marker;
-        }  else if (cell === '9') {
+        }  else {
             gameboard.tictactoe[2][2] = marker;
         }  
     }
@@ -69,7 +71,19 @@ const playerTwo = playerFactory('Player 2', 'O');
 const gameController = (() => {
     gameboard.renderGameboard();
 
-    function addMarker(cell, marker) {
+    let marker = 'O';
+
+    function changeTurn() {
+        if (marker === 'X') {
+            marker = 'O';
+        } else {
+            marker = 'X';
+        }
+    }
+
+    function addMarker(cell) {
+        changeTurn();
+
         if (cell.textContent === '') {
             gameboard.placeMarker(cell.dataset.id, marker);
             cell.textContent = marker;
@@ -82,6 +96,6 @@ const gameController = (() => {
 const cells = document.querySelectorAll('.box');
 cells.forEach(cell => {
     cell.addEventListener('click', () => {
-        gameController.addMarker(cell, 'O');
+        gameController.addMarker(cell);
     });
 });
