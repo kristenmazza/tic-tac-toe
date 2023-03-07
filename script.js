@@ -81,6 +81,19 @@ const gameController = (() => {
         }
     }
 
+    function checkWin() {
+        for (let i=0; i < 3; i++) {
+            if (gameboard.tictactoe[0][i] === marker && gameboard.tictactoe[1][i] === marker && gameboard.tictactoe[2][i]) {
+                console.log("col win");
+            } else if (gameboard.tictactoe[i][0] === marker && gameboard.tictactoe[i][1] === marker && gameboard.tictactoe[i][2] === marker) {
+                console.log("row win");
+            } else if (gameboard.tictactoe[0][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[2][2] === marker ||
+                       gameboard.tictactoe[2][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[0][2] === marker) {
+                console.log("horizontal win");
+            }
+        }
+    }
+
     function addMarker(cell) {
         changeTurn();
 
@@ -88,6 +101,8 @@ const gameController = (() => {
             gameboard.placeMarker(cell.dataset.id, marker);
             cell.textContent = marker;
         }
+        
+        checkWin();
     }
 
     return { addMarker };
