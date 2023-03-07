@@ -28,6 +28,28 @@ const gameboard = (() => {
         }
     }
 
+    function placeMarker(cell, marker) {
+        if (cell === '1') {
+            gameboard.tictactoe[0][0] = marker; 
+        } else if (cell === '2') {
+            gameboard.tictactoe[0][1] = marker;
+        }  else if (cell === '3') {
+            gameboard.tictactoe[0][2] = marker;
+        }  else if (cell === '4') {
+            gameboard.tictactoe[1][0] = marker;
+        }  else if (cell === '5') {
+            gameboard.tictactoe[1][1] = marker;
+        }  else if (cell === '6') {
+            gameboard.tictactoe[1][2] = marker;
+        }  else if (cell === '7') {
+            gameboard.tictactoe[2][0] = marker;
+        }  else if (cell === '8') {
+            gameboard.tictactoe[2][1] = marker;
+        }  else if (cell === '9') {
+            gameboard.tictactoe[2][2] = marker;
+        }  
+    }
+
     function renderGameboard() {
 
         while (board.hasChildNodes()) {
@@ -36,7 +58,7 @@ const gameboard = (() => {
         addCells();
     
     }
-    return { tictactoe, renderGameboard };
+    return { tictactoe, placeMarker, renderGameboard };
 })();
 
 const playerFactory = (name, marker) => ({name, marker});
@@ -47,15 +69,11 @@ const playerTwo = playerFactory('Player 2', 'O');
 const gameController = (() => {
     gameboard.renderGameboard();
 
-    function addMarker(cellId) {
-        if (cellId === '1') {
-            gameboard.tictactoe[0][0] = 'X'; 
-            console.log(gameboard.tictactoe);
-        } else if (cellId === '2') {
-            gameboard.tictactoe[0][1] = '2';
-            console.log(gameboard.tictactoe);
-        }   
-        gameboard.renderGameboard();
+    function addMarker(cell, marker) {
+        if (cell.textContent === '') {
+            gameboard.placeMarker(cell.dataset.id, marker);
+            cell.textContent = marker;
+        }
     }
 
     return { addMarker };
@@ -63,15 +81,7 @@ const gameController = (() => {
 
 const cells = document.querySelectorAll('.box');
 cells.forEach(cell => {
-    cell.addEventListener('click', (e) => {
-        const text = cell.textContent;
-        let cellId;
-        if (text === '') {
-            console.log(e.target.dataset.id);
-            cellId = e.target.dataset.id;
-            gameController.addMarker(cellId);
-
-        }
+    cell.addEventListener('click', () => {
+        gameController.addMarker(cell, 'O');
     });
 });
-
