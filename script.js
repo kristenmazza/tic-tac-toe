@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 
 const gameboard = (() => {
+    
     const tictactoe = [
         ['', '', ''],
         ['', '', ''],
@@ -84,19 +85,27 @@ const gameController = (() => {
     function checkWin() {        
 
         const fullBoard = gameboard.tictactoe.every(row => row.every(cell => cell !== ''));
+        const boardContainer = document.getElementById('gameboard');
+        
+        function removeListener() {
+            boardContainer.removeEventListener('click', handleClickableBox);
+        }
 
-        for (let i=0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
             if (gameboard.tictactoe[0][i] === marker && gameboard.tictactoe[1][i] === marker && gameboard.tictactoe[2][i] === marker) {
                 console.log("col win");
+                removeListener();
             } else if (gameboard.tictactoe[i][0] === marker && gameboard.tictactoe[i][1] === marker && gameboard.tictactoe[i][2] === marker) {
                 console.log("row win");
+                removeListener();
             } else if (gameboard.tictactoe[0][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[2][2] === marker ||
                        gameboard.tictactoe[2][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[0][2] === marker) {
                 console.log("horizontal win");
+                removeListener();
             } else if (fullBoard) {
                 console.log("tie");
+                removeListener();
             }
-
         }
     }
 
@@ -112,11 +121,23 @@ const gameController = (() => {
     }
 
     return { addMarker };
+    
 })();
 
-const cells = document.querySelectorAll('.box');
-cells.forEach(cell => {
-    cell.addEventListener('click', () => {
-        gameController.addMarker(cell);
-    });
-});
+
+const boardContainer = document.getElementById('gameboard');
+const handleClickableBox = e => {
+    if (!e.target.classList.contains('box')) {
+        return;
+    }
+    gameController.addMarker(e.target);
+}
+
+// function handleClickableBox(e) {
+//     if (!e.target.classList.contains('box')) {
+//         return;
+//     }
+//     gameController.addMarker(e.target);
+// }
+
+boardContainer.addEventListener('click', handleClickableBox);
