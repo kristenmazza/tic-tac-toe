@@ -54,90 +54,121 @@ const gameboard = (() => {
     }
 
     function renderGameboard() {
-
         while (board.hasChildNodes()) {
             board.removeChild(board.firstChild);
         }
         addCells();
     
     }
+
     return { tictactoe, placeMarker, renderGameboard };
 })();
 
 const playerFactory = (name, marker) => ({name, marker});
 
-const playerOne = playerFactory('Player 1', 'X');
-const playerTwo = playerFactory('Player 2', 'O');
-
 const gameController = (() => {
-    gameboard.renderGameboard();
+    const playerOne = playerFactory('Player 1', 'X');
+    const playerTwo = playerFactory('Player 2', 'O');
 
-    let marker = 'O';
+    let player = playerOne;
+
+    const tictactoeCellIds = [
+        ['1', '2', '3'],
+        ['4', '5', '6'],
+        ['7', '8', '9'],
+    ]
+    
+    const boardContainer = document.getElementById('gameboard');
+    const handleClickableBox = e => {
+        if (!e.target.classList.contains('box')) {
+            return;
+        }
+        if (e.target.textContent !== '') {
+            return;
+        }
+        e.target.textContent = gameController.makePlay(e.target);
+    }
 
     function changeTurn() {
-        if (marker === 'X') {
-            marker = 'O';
-        } else {
-            marker = 'X';
+        player = player === playerOne ? playerTwo : playerOne;
+    }
+
+    function highlightWinningCell(position) {
+        const cellId = tictactoeCellIds[position[0]][position[1]];
+        const element = document.querySelector(`[data-id='${cellId}']`);
+        element.classList.add('highlight');
+    }
+
+    function highlightWinningLine(positions) {
+        for (let i = 0; i < positions.length; i++) {
+            highlightWinningCell(positions[i]);
         }
     }
 
     function checkWin() {        
 
         const fullBoard = gameboard.tictactoe.every(row => row.every(cell => cell !== ''));
-        const boardContainer = document.getElementById('gameboard');
         
         function removeListener() {
             boardContainer.removeEventListener('click', handleClickableBox);
         }
 
         for (let i = 0; i < 3; i++) {
-            if (gameboard.tictactoe[0][i] === marker && gameboard.tictactoe[1][i] === marker && gameboard.tictactoe[2][i] === marker) {
-                console.log("col win");
+            if (gameboard.tictactoe[0][i] === player.marker && gameboard.tictactoe[1][i] === player.marker && gameboard.tictactoe[2][i] === player.marker) {
+                highlightWinningLine([[0, i], [1, i], [2, i]]);
                 removeListener();
-            } else if (gameboard.tictactoe[i][0] === marker && gameboard.tictactoe[i][1] === marker && gameboard.tictactoe[i][2] === marker) {
-                console.log("row win");
+            } else if (gameboard.tictactoe[i][0] === player.marker && gameboard.tictactoe[i][1] === player.marker && gameboard.tictactoe[i][2] === player.marker) {
+                highlightWinningLine([[i, 0], [i, 1], [i, 2]]);
                 removeListener();
-            } else if (gameboard.tictactoe[0][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[2][2] === marker ||
-                       gameboard.tictactoe[2][0] === marker && gameboard.tictactoe[1][1] === marker && gameboard.tictactoe[0][2] === marker) {
-                console.log("horizontal win");
+            } else if (gameboard.tictactoe[0][0] === player.marker && gameboard.tictactoe[1][1] === player.marker && gameboard.tictactoe[2][2] === player.marker) {                
+                highlightWinningLine([[0, 0], [1, 1], [2, 2]]);
+                removeListener();
+            } else if (gameboard.tictactoe[2][0] === player.marker && gameboard.tictactoe[1][1] === player.marker && gameboard.tictactoe[0][2] === player.marker) {
+                highlightWinningLine([[2, 0], [1, 1], [0, 2]]);
                 removeListener();
             } else if (fullBoard) {
-                console.log("tie");
                 removeListener();
             }
         }
     }
 
-    function addMarker(cell) {
-        changeTurn();
+    function makePlay(cell) {
+        gameboard.placeMarker(cell.dataset.id, player.marker);
+        const playedMarker = player.marker;
 
-        if (cell.textContent === '') {
-            gameboard.placeMarker(cell.dataset.id, marker);
-            cell.textContent = marker;
-        }
-        
         checkWin();
+        changeTurn();
+        return playedMarker;
     }
 
-    return { addMarker };
+    function resetGameboard() {
+        gameboard.tictactoe = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', ''],
+        ]
+
+        gameboard.renderGameboard();
+    }
+
+    function newGame() {         
+        resetGameboard();
+        player = playerOne;
+
+        const highlightedCells = document.querySelectorAll('.highlight');
+        highlightedCells.forEach(cell => {
+            cell.classList.remove('highlight');
+        }) 
+        boardContainer.addEventListener('click', handleClickableBox);
+    }
+
+    resetGameboard();
+
+    return { makePlay, boardContainer, handleClickableBox, newGame};
     
 })();
 
 
-const boardContainer = document.getElementById('gameboard');
-const handleClickableBox = e => {
-    if (!e.target.classList.contains('box')) {
-        return;
-    }
-    gameController.addMarker(e.target);
-}
-
-// function handleClickableBox(e) {
-//     if (!e.target.classList.contains('box')) {
-//         return;
-//     }
-//     gameController.addMarker(e.target);
-// }
-
-boardContainer.addEventListener('click', handleClickableBox);
+gameController.boardContainer.addEventListener('click', gameController.handleClickableBox);
+const newGameButton = document.getElementById('new-game');
+newGameButton.addEventListener('click', gameController.newGame);
