@@ -2,7 +2,7 @@
 
 const gameboard = (() => {
     
-    const tictactoe = [
+    let tictactoe = [
         ['', '', ''],
         ['', '', ''],
         ['', '', ''],
@@ -33,24 +33,51 @@ const gameboard = (() => {
     // Place marker in the array
     function placeMarker(cell, marker) {
         if (cell === '1') {
-            gameboard.tictactoe[0][0] = marker; 
+            tictactoe[0][0] = marker; 
         } else if (cell === '2') {
-            gameboard.tictactoe[0][1] = marker;
+            tictactoe[0][1] = marker;
         }  else if (cell === '3') {
-            gameboard.tictactoe[0][2] = marker;
+            tictactoe[0][2] = marker;
         }  else if (cell === '4') {
-            gameboard.tictactoe[1][0] = marker;
+            tictactoe[1][0] = marker;
         }  else if (cell === '5') {
-            gameboard.tictactoe[1][1] = marker;
+            tictactoe[1][1] = marker;
         }  else if (cell === '6') {
-            gameboard.tictactoe[1][2] = marker;
+            tictactoe[1][2] = marker;
         }  else if (cell === '7') {
-            gameboard.tictactoe[2][0] = marker;
+            tictactoe[2][0] = marker;
         }  else if (cell === '8') {
-            gameboard.tictactoe[2][1] = marker;
+            tictactoe[2][1] = marker;
         }  else {
-            gameboard.tictactoe[2][2] = marker;
+            tictactoe[2][2] = marker;
         }  
+    }
+
+    function findWinningCells(player) {
+        for (let i = 0; i < 3; i++) {
+            if (tictactoe[0][i] === player.marker && tictactoe[1][i] === player.marker && tictactoe[2][i] === player.marker) {
+                return [[0, i], [1, i], [2, i]];
+            } if (tictactoe[i][0] === player.marker && tictactoe[i][1] === player.marker && tictactoe[i][2] === player.marker) {
+                return [[i, 0], [i, 1], [i, 2]];
+            } if (tictactoe[0][0] === player.marker && tictactoe[1][1] === player.marker && tictactoe[2][2] === player.marker) {                
+                return [[0, 0], [1, 1], [2, 2]];
+            } if (tictactoe[2][0] === player.marker && tictactoe[1][1] === player.marker && tictactoe[0][2] === player.marker) {
+                return [[2, 0], [1, 1], [0, 2]];
+            }
+        }
+        return false;
+    }
+
+    function isFull() {
+        return tictactoe.every(row => row.every(cell => cell !== ''));
+    }
+
+    function clearBoard() {
+        tictactoe = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', ''],
+        ]
     }
 
     function renderGameboard() {
@@ -58,10 +85,10 @@ const gameboard = (() => {
             board.removeChild(board.firstChild);
         }
         addCells();
-    
+
     }
 
-    return { tictactoe, placeMarker, renderGameboard };
+    return { placeMarker, renderGameboard, findWinningCells, isFull, clearBoard };
 })();
 
 const playerFactory = (name, marker) => ({name, marker});
@@ -107,29 +134,23 @@ const gameController = (() => {
 
     function checkWin() {        
 
-        const fullBoard = gameboard.tictactoe.every(row => row.every(cell => cell !== ''));
+        const fullBoard = gameboard.isFull();
         
         function removeListener() {
             boardContainer.removeEventListener('click', handleClickableBox);
         }
 
-        for (let i = 0; i < 3; i++) {
-            if (gameboard.tictactoe[0][i] === player.marker && gameboard.tictactoe[1][i] === player.marker && gameboard.tictactoe[2][i] === player.marker) {
-                highlightWinningLine([[0, i], [1, i], [2, i]]);
-                removeListener();
-            } else if (gameboard.tictactoe[i][0] === player.marker && gameboard.tictactoe[i][1] === player.marker && gameboard.tictactoe[i][2] === player.marker) {
-                highlightWinningLine([[i, 0], [i, 1], [i, 2]]);
-                removeListener();
-            } else if (gameboard.tictactoe[0][0] === player.marker && gameboard.tictactoe[1][1] === player.marker && gameboard.tictactoe[2][2] === player.marker) {                
-                highlightWinningLine([[0, 0], [1, 1], [2, 2]]);
-                removeListener();
-            } else if (gameboard.tictactoe[2][0] === player.marker && gameboard.tictactoe[1][1] === player.marker && gameboard.tictactoe[0][2] === player.marker) {
-                highlightWinningLine([[2, 0], [1, 1], [0, 2]]);
-                removeListener();
-            } else if (fullBoard) {
-                removeListener();
-            }
+        const winningCells = gameboard.findWinningCells(player);
+
+        if (fullBoard) {
+            removeListener();
         }
+
+        if (winningCells) {
+            removeListener();
+            highlightWinningLine(winningCells);
+        }
+
     }
 
     function makePlay(cell) {
@@ -142,12 +163,7 @@ const gameController = (() => {
     }
 
     function resetGameboard() {
-        gameboard.tictactoe = [
-            ['', '', ''],
-            ['', '', ''],
-            ['', '', ''],
-        ]
-
+        gameboard.clearBoard();
         gameboard.renderGameboard();
     }
 
