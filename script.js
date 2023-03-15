@@ -85,7 +85,6 @@ const gameboard = (() => {
             board.removeChild(board.firstChild);
         }
         addCells();
-
     }
 
     return { placeMarker, renderGameboard, findWinningCells, isFull, clearBoard };
@@ -97,7 +96,13 @@ const gameController = (() => {
     const playerOne = playerFactory('Player 1', 'X');
     const playerTwo = playerFactory('Player 2', 'O');
 
+    const playerOneButton = document.getElementById("player-one");
+    const playerTwoButton = document.getElementById("player-two");
+
     let player = playerOne;
+    playerOneButton.classList.toggle('current-player-style');
+
+    let winner;
 
     const tictactoeCellIds = [
         ['1', '2', '3'],
@@ -105,19 +110,21 @@ const gameController = (() => {
         ['7', '8', '9'],
     ]
     
-    const boardContainer = document.getElementById('gameboard');
-    const handleClickableBox = e => {
-        if (!e.target.classList.contains('box')) {
-            return;
-        }
-        if (e.target.textContent !== '') {
-            return;
-        }
-        e.target.textContent = gameController.makePlay(e.target);
-    }
-
     function changeTurn() {
-        player = player === playerOne ? playerTwo : playerOne;
+        if (player === playerOne) {
+            player = playerTwo;
+            playerTwoButton.classList.toggle('current-player-style');
+            playerOneButton.classList.toggle('current-player-style')
+        } else {
+            player = playerOne;
+            playerOneButton.classList.toggle('current-player-style');
+            playerTwoButton.classList.toggle('current-player-style')
+        } 
+
+        if (winner || gameboard.isFull()) {
+            playerOneButton.classList.remove('current-player-style');
+            playerTwoButton.classList.remove('current-player-style');
+        }
     }
 
     function highlightWinningCell(position) {
@@ -133,33 +140,41 @@ const gameController = (() => {
     }
 
     function checkWin() {        
-
-        const fullBoard = gameboard.isFull();
-        
-        function removeListener() {
-            boardContainer.removeEventListener('click', handleClickableBox);
-        }
-
         const winningCells = gameboard.findWinningCells(player);
 
-        if (fullBoard) {
-            removeListener();
-        }
-
         if (winningCells) {
-            removeListener();
+            winner = player;
             highlightWinningLine(winningCells);
         }
-
     }
 
     function makePlay(cell) {
+        if (winner) {
+            console.log("can't play, someone won");
+            return null;
+        }
+
         gameboard.placeMarker(cell.dataset.id, player.marker);
         const playedMarker = player.marker;
-
+        
         checkWin();
         changeTurn();
         return playedMarker;
+    }
+
+    const boardContainer = document.getElementById('gameboard');
+    const handleClickableBox = e => {
+        if (!e.target.classList.contains('box')) {
+            return;
+        }
+        if (e.target.textContent !== '') {
+            return;
+        }
+        const playedMarker = makePlay(e.target);
+
+        if (playedMarker) {
+            e.target.textContent = playedMarker;
+        }
     }
 
     function resetGameboard() {
@@ -170,17 +185,18 @@ const gameController = (() => {
     function newGame() {         
         resetGameboard();
         player = playerOne;
+        winner = null;
+        playerOneButton.classList.toggle('current-player-style');
 
         const highlightedCells = document.querySelectorAll('.highlight');
         highlightedCells.forEach(cell => {
             cell.classList.remove('highlight');
         }) 
-        boardContainer.addEventListener('click', handleClickableBox);
     }
 
     resetGameboard();
 
-    return { makePlay, boardContainer, handleClickableBox, newGame};
+    return { boardContainer, handleClickableBox, newGame };
     
 })();
 
