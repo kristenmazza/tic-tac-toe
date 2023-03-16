@@ -30,7 +30,7 @@ const gameboard = (() => {
         }
     }
 
-    // Place marker in the array
+    // Place player's marker in the array
     function placeMarker(cell, marker) {
         if (cell === '1') {
             tictactoe[0][0] = marker; 
@@ -53,6 +53,7 @@ const gameboard = (() => {
         }  
     }
 
+    // Return the array locations of the winning cells
     function findWinningCells(player) {
         for (let i = 0; i < 3; i++) {
             if (tictactoe[0][i] === player.marker && tictactoe[1][i] === player.marker && tictactoe[2][i] === player.marker) {
@@ -68,6 +69,7 @@ const gameboard = (() => {
         return false;
     }
 
+    // Check if every cell in every row contains a player marker
     function isFull() {
         return tictactoe.every(row => row.every(cell => cell !== ''));
     }
@@ -95,14 +97,15 @@ const playerFactory = (name, marker) => ({name, marker});
 const gameController = (() => {
     const playerOne = playerFactory('Player 1', 'X');
     const playerTwo = playerFactory('Player 2', 'O');
+    
+    let player = playerOne;
+    let winner;
 
     const playerOneButton = document.getElementById("player-one");
     const playerTwoButton = document.getElementById("player-two");
+    const winnerStatement = document.getElementById('winner');
 
-    let player = playerOne;
     playerOneButton.classList.toggle('current-player-style');
-
-    let winner;
 
     const tictactoeCellIds = [
         ['1', '2', '3'],
@@ -114,11 +117,11 @@ const gameController = (() => {
         if (player === playerOne) {
             player = playerTwo;
             playerTwoButton.classList.toggle('current-player-style');
-            playerOneButton.classList.toggle('current-player-style')
+            playerOneButton.classList.toggle('current-player-style');
         } else {
             player = playerOne;
             playerOneButton.classList.toggle('current-player-style');
-            playerTwoButton.classList.toggle('current-player-style')
+            playerTwoButton.classList.toggle('current-player-style');
         } 
 
         if (winner || gameboard.isFull()) {
@@ -127,16 +130,26 @@ const gameController = (() => {
         }
     }
 
+    // highlightWinningCells function takes in the 1D array for each winning cell position (e.g., [0,1]) 
+    // then compares the position to the tictactoeCellIds multidimentional array to get the ID for the winning cell.
+    // A cell ID attribute is added to each winning cell in order to highlight the cell.
     function highlightWinningCell(position) {
         const cellId = tictactoeCellIds[position[0]][position[1]];
         const element = document.querySelector(`[data-id='${cellId}']`);
         element.classList.add('highlight');
     }
 
+    // highlightWinningLine function takes in the line of winning cells (e.g., [[0,1], [0,2], [0,3]]),
+    // loops through to get a 1D array (e.g., [0,1]) for each winning cell position,
+    // then uses the 1D array as the parameter for highlightWinningCells function.
     function highlightWinningLine(positions) {
         for (let i = 0; i < positions.length; i++) {
             highlightWinningCell(positions[i]);
         }
+    }
+
+    function declareWinner() {
+        winnerStatement.textContent = `The winner is ${winner.name}!`
     }
 
     function checkWin() {        
@@ -145,12 +158,14 @@ const gameController = (() => {
         if (winningCells) {
             winner = player;
             highlightWinningLine(winningCells);
+            declareWinner(winner);
         }
     }
 
+    // Attempt to make a play. If there is a winner, do not anything more. Otherwise, place a marker in the array
+    // and continue play.
     function makePlay(cell) {
         if (winner) {
-            console.log("can't play, someone won");
             return null;
         }
 
@@ -162,6 +177,7 @@ const gameController = (() => {
         return playedMarker;
     }
 
+    // Only allow gameboard cell that is empty cell to be clicked. If a play can be made, add a marker to the UI.
     const boardContainer = document.getElementById('gameboard');
     const handleClickableBox = e => {
         if (!e.target.classList.contains('box')) {
@@ -186,7 +202,9 @@ const gameController = (() => {
         resetGameboard();
         player = playerOne;
         winner = null;
-        playerOneButton.classList.toggle('current-player-style');
+        playerOneButton.classList.add('current-player-style');
+        playerTwoButton.classList.remove('current-player-style');
+        winnerStatement.textContent = '\u00A0';
 
         const highlightedCells = document.querySelectorAll('.highlight');
         highlightedCells.forEach(cell => {
