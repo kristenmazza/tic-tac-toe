@@ -98,10 +98,16 @@ button[type="submit"]:hover, .new-game-btn:hover {
 
 .game-wrapper {
     display: flex;
-    gap: 4vw;
-    align-items: center;
-    width: 100%;
-    justify-content: center;
+    flex-direction: column;
+    width: 500px;
+}
+
+.player-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 1vh;
+    gap: 1vh;
+    flex-wrap: wrap;
 }
 
 #gameboard {
@@ -110,7 +116,8 @@ button[type="submit"]:hover, .new-game-btn:hover {
     grid-template-rows: repeat(3, 1fr);
     grid-gap: 0.5rem;
     height: 500px;
-    flex: 0 0 500px;
+    width: 500px;
+    align-self: center;
 }
 
 .box {
@@ -143,7 +150,7 @@ button[type="submit"]:hover, .new-game-btn:hover {
 
 .player-btn {
 	border: none;
-	padding: 0.4vw;
+	padding: 8px;
 	font: inherit;
     color: inherit;
     border-radius: 10px;
@@ -159,14 +166,19 @@ button[type="submit"]:hover, .new-game-btn:hover {
     margin-right: auto;
 }
 
-
 @media (max-width: 600px) {
     #gameboard {
-        height: 200px;
-        flex: 0 0 200px;
+        height: 300px;
+        width: 300px;
     }
 
     .form {
         flex-direction: column;
+    }
+
+    .game-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
     }
   }
