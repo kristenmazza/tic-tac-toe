@@ -109,6 +109,8 @@ const gameController = (() => {
     const playerOneButton = document.getElementById("player-one");
     const playerTwoButton = document.getElementById("player-two");
     const winnerStatement = document.getElementById('winner');
+    const p1DisplayName = document.getElementById('player-one');
+    const p2DisplayName = document.getElementById('player-two');
 
     playerOneButton.classList.toggle('current-player-style');
 
@@ -119,6 +121,7 @@ const gameController = (() => {
         ['7', '8', '9'],
     ]
 
+    // Use form input to change displayed names for both players.
     const form = document.querySelector('form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -127,9 +130,6 @@ const gameController = (() => {
         playerTwo.name = document.getElementById('p2-name').value;
 
         form.reset();
-
-        const p1DisplayName = document.getElementById('player-one');
-        const p2DisplayName = document.getElementById('player-two');
 
         p1DisplayName.textContent = playerOne.name;
         p2DisplayName.textContent = playerTwo.name;
@@ -236,9 +236,13 @@ const gameController = (() => {
         resetGameboard();
         player = playerOne;
         winner = null;
+        playerOne.name = 'Player 1';
+        playerTwo.name = 'Player 2';
         playerOneButton.classList.add('current-player-style');
         playerTwoButton.classList.remove('current-player-style');
         winnerStatement.textContent = '\u00A0';
+        p1DisplayName.textContent = 'Player 1';
+        p2DisplayName.textContent = 'Player 2';
 
         const highlightedCells = document.querySelectorAll('.highlight');
         highlightedCells.forEach(cell => {
