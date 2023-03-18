@@ -34,6 +34,16 @@ body {
     padding-bottom: 30px;
 }
 
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
 #new-game {
     padding-top: 40px;
 }

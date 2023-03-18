@@ -118,6 +118,22 @@ const gameController = (() => {
         ['4', '5', '6'],
         ['7', '8', '9'],
     ]
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        playerOne.name = document.getElementById('p1-name').value;
+        playerTwo.name = document.getElementById('p2-name').value;
+
+        form.reset();
+
+        const p1DisplayName = document.getElementById('player-one');
+        const p2DisplayName = document.getElementById('player-two');
+
+        p1DisplayName.textContent = playerOne.name;
+        p2DisplayName.textContent = playerTwo.name;
+    })
     
     // Change the player's turn while highlighting current player.
     function changeTurn() {
