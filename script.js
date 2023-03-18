@@ -108,11 +108,12 @@ const gameController = (() => {
 
     const playerOneButton = document.getElementById("player-one");
     const playerTwoButton = document.getElementById("player-two");
-    const winnerStatement = document.getElementById('winner');
+    const gameStatus = document.getElementById('game-status');
     const p1DisplayName = document.getElementById('player-one');
     const p2DisplayName = document.getElementById('player-two');
 
     playerOneButton.classList.toggle('current-player-style');
+    gameStatus.textContent = `Get three in a row to win`;
 
     // Cell ID by position.
     const tictactoeCellIds = [
@@ -137,6 +138,12 @@ const gameController = (() => {
     
     // Change the player's turn while highlighting current player.
     function changeTurn() {
+        if (winner || gameboard.isFull()) {
+            playerOneButton.classList.remove('current-player-style');
+            playerTwoButton.classList.remove('current-player-style');
+            return;
+        }
+
         if (player === playerOne) {
             player = playerTwo;
             playerTwoButton.classList.toggle('current-player-style');
@@ -146,11 +153,6 @@ const gameController = (() => {
             playerOneButton.classList.toggle('current-player-style');
             playerTwoButton.classList.toggle('current-player-style');
         } 
-
-        if (winner || gameboard.isFull()) {
-            playerOneButton.classList.remove('current-player-style');
-            playerTwoButton.classList.remove('current-player-style');
-        }
     }
 
     // highlightWinningCells function takes in the 1D array for each winning cell position (e.g., [0,1]) 
@@ -175,7 +177,7 @@ const gameController = (() => {
 
     // Declare the winner on the DOM.
     function declareWinner() {
-        winnerStatement.textContent = `The winner is ${winner.name}!`
+        gameStatus.textContent = `The winner is ${winner.name}!`
     }
 
     // Check whether winning cells exist. If they do, highlight the line of winning cells and declare the winner.
@@ -240,9 +242,10 @@ const gameController = (() => {
         playerTwo.name = 'Player 2';
         playerOneButton.classList.add('current-player-style');
         playerTwoButton.classList.remove('current-player-style');
-        winnerStatement.textContent = '\u00A0';
         p1DisplayName.textContent = 'Player 1';
         p2DisplayName.textContent = 'Player 2';
+        gameStatus.textContent = `Get three in a row to win`;
+
 
         const highlightedCells = document.querySelectorAll('.highlight');
         highlightedCells.forEach(cell => {
