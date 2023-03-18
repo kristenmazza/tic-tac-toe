@@ -1,31 +1,17 @@
-body {
+html, body {
     font-family: Roboto, Oxygen, Ubuntu, Cantarell;
     background-color: #ffffff;
+    min-height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    color: #40434E;
 }
 
 h1 {
     font-weight: 500;
-    font-size: 3rem;
+    font-size: 3em;
     letter-spacing: 0.1em;
     color: #40434E;
-}
-
-#gameboard {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(50px, 100px));
-    grid-template-rows: repeat(3, minmax(50px, 100px));
-    grid-gap: 10px;
-}
-
-.box {
-    background-color: #40434E;
-    color: #fff;
-    border-radius: 3px;
-    padding: 10px;
-    font-size: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .container {
@@ -44,7 +30,7 @@ h1 {
 
 .form {
     display: flex;
-    gap: 20px;
+    gap: 1rem;
     background-color: #d4d4d4;
     padding: 20px;
     border-radius: 10px;
@@ -53,7 +39,7 @@ h1 {
 
 label {
     font-size: 0.7rem;
-    color: rgb(24, 24, 24);
+    color: inherit;
     font-weight: 500;
     letter-spacing: 0.1em;
     padding-bottom: 3px;
@@ -81,14 +67,14 @@ input:focus {
     box-shadow: 0px 2px 4px #d0d0d0;
 }
 
-button[type="submit"] {
+button[type="submit"], .new-game-btn{
     background-color: #40434E;
     padding: 5px 10px;
     font-size: 0.8rem;
     font-family: inherit;
     font-weight: 400;
     letter-spacing: 0.1em;
-    color: rgb(255, 255, 255);
+    color: #fbfbfb;
     border-radius: 5px;
     border: none;
     box-shadow: 0px 1px 3px #838383;
@@ -96,14 +82,51 @@ button[type="submit"] {
     cursor: pointer;
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover, .new-game-btn:hover {
     background-color: #4a4d5b;
+}
+
+.new-game-btn {
+    padding: 15px 20px;
 }
 
 #game-status {
     font-size: 1rem;
     font-weight: 400;
     letter-spacing: 0.05em;
+}
+
+.game-wrapper {
+    display: flex;
+    gap: 4vw;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+#gameboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: 0.5rem;
+    height: 500px;
+    flex: 0 0 500px;
+}
+
+.box {
+    background-color: #4f5361;
+    color: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 5cqw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+}
+
+.box:hover {
+    cursor: pointer;
 }
 
 #new-game {
@@ -117,3 +140,33 @@ button[type="submit"]:hover {
 .current-player-style {
     background-color:#fff386;
 }
+
+.player-btn {
+	border: none;
+	padding: 0.4vw;
+	font: inherit;
+    color: inherit;
+    border-radius: 10px;
+}
+
+.player {
+    flex: 0 0 100px;
+    display: flex;
+    justify-content: end;
+} 
+
+#player-two {
+    margin-right: auto;
+}
+
+
+@media (max-width: 600px) {
+    #gameboard {
+        height: 200px;
+        flex: 0 0 200px;
+    }
+
+    .form {
+        flex-direction: column;
+    }
+  }

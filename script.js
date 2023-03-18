@@ -181,6 +181,7 @@ const gameController = (() => {
     }
 
     // Check whether winning cells exist. If they do, highlight the line of winning cells and declare the winner.
+    // Declare a tie game if gameboard is full without a winner.
     function checkWin() {        
         const winningCells = gameboard.findWinningCells(player);
 
@@ -188,6 +189,10 @@ const gameController = (() => {
             winner = player;
             highlightWinningLine(winningCells);
             declareWinner(winner);
+        }
+
+        if (gameboard.isFull() && !winningCells) {
+            gameStatus.textContent = `It's a tie!`;
         }
     }
 
