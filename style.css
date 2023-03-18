@@ -159,11 +159,11 @@ button[type="submit"]:hover, .new-game-btn:hover {
 .player {
     flex: 0 0 100px;
     display: flex;
-    justify-content: end;
+    justify-content: start;
 } 
 
 #player-two {
-    margin-right: auto;
+    margin-left: auto;
 }
 
 @media (max-width: 600px) {
